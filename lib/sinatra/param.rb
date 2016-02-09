@@ -18,7 +18,7 @@ module Sinatra
       return unless applicable_params.member?(name) or options[:default] or options[:required]
 
       begin
-        applicable_params[name] = coerce(applicable_params[name], type, options)
+        applicable_params[name] = coerce(applicable_params[name], type, name, options)
         applicable_params[name] = (options[:default].call if options[:default].respond_to?(:call)) || options[:default] if applicable_params[name].nil? and options[:default]
         applicable_params[name] = options[:transform].to_proc.call(applicable_params[name]) if applicable_params[name] and options[:transform]
         validate!(applicable_params[name], options)
@@ -108,7 +108,7 @@ module Sinatra
 
     private
 
-    def coerce(param, type, options = {})
+    def coerce(param, type, param_name, options = {})
       begin
         return nil if param.nil?
         return param if (param.is_a?(type) rescue false)
@@ -123,7 +123,7 @@ module Sinatra
         return (/(false|f|no|n|0)$/i === param.to_s ? false : (/(true|t|yes|y|1)$/i === param.to_s ? true : nil)) if type == TrueClass || type == FalseClass || type == Boolean
         return nil
       rescue ArgumentError
-        raise InvalidParameterError, "'#{param}' is not a valid #{type}"
+        raise InvalidParameterError, "#{param_name} is not a valid #{type}"
       end
     end
 
