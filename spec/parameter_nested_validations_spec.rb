@@ -70,9 +70,9 @@ describe 'Nested Validation' do
       get("/validation/hash/nested_values", params) do |response|
         expect(response.status).to eq(400)
         body = JSON.parse(response.body)
-        expect(body['message']).to eq("'test' is not a valid Integer")
+        expect(body['message']).to eq("optional_sub_child is not a valid Integer")
         expect(body['errors']).to eq({
-          "parent[nested_child][optional_sub_child]" => "'test' is not a valid Integer"
+          "parent[nested_child][optional_sub_child]" => "optional_sub_child is not a valid Integer"
         })
       end
     end
